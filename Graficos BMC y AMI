@@ -1,0 +1,140 @@
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+"                          CODIFICACIÓN BMC                          "
+def Codificación_BMC(data):          #Definimos una función basada en el la cadena de valores (data)
+    BMC = ""                         #Creamos una cadena de valores vacía
+    Ant_bit_1 = '0'                  #Creamos la variable de referencia (bit anterior) para la conversión
+    for bit in data:                 #Ciclo for para leer en forma de bits la señal digital 
+        if bit == '1':               #Condicional cuando un bit de la señal digital vale 1
+            if Ant_bit_1 == '0':     #Condicional cuando el bit anterior de la señal digital vale 0
+                BMC += "10"          #Cuando el bit anterior vale 0, se agrega un 10 a la cadena de valores
+                Ant_bit_1 = '0'      #Definimos un valor de 0 al bit anterior para seguir con la conversión
+            if Ant_bit_1 == '1':     #Condicional cuando el bit anterior de la señal digital vale 1
+                BMC += "01"          #Cuando el bit anterior vale 1, se agrega un 01 a la cadena de valores
+                Ant_bit_1 = '1'      #Definimos un valor de 1 al bit anterior para seguir con la conversión
+
+        else:                        #Condicional cuando un bit de la señal digital vale 0
+            if Ant_bit_1 == '0':     #Condicional cuando el bit anterior de la señal digital vale 0
+                BMC += "11"          #Cuando el bit anterior vale 0, se agrega un 11 a la cadena de valores
+                Ant_bit_1 = '1'      #Definimos un valor de 1 al bit anterior para seguir con la conversión
+            else:                    #Condicional cuando el bit anterior de la señal digital vale 1
+                BMC += "00"          #Cuando el bit anterior vale 0, se agrega un 00 a la cadena de valores
+                Ant_bit_1 = '0'      #Definimos un valor de 0 al bit anterior para seguir con la conversión
+    return BMC                       #Regresamos el valor actualizado de la cadena de valores
+
+"                          DECODIFICACIÓN BMC                          "
+def Decodificación_BMC(BMC):         #Definimos una función basada en el la cadena de valores (BMC)
+    BMC_data = ""                    #Creamos una cadena de valores vacía
+    Ant_bit_2 = '0'                  #Creamos la variable de referencia (bit anterior) para la conversión
+    for i in range(0, len(BMC), 2):  #Ciclo for para leer 2 pocisiones a lo largo de la cadena BMC 
+        if BMC[i:i+2] == "10":       #Condicional cuando dos bits de la cadena BMC vale 10
+            BMC_data += "1"          #Cuando dichas pocisiones valen 10, se agrega un 1 a la cadena de valores
+            Ant_bit_2 = '1'          #Definimos un valor de 1 al bit anterior para seguir con la conversión
+        if BMC[i:i+2] == "01":       #Condicional cuando dos bits de la cadena BMC vale 01
+            BMC_data += "1"          #Cuando dichas pocisiones valen 01, se agrega un 1 a la cadena de valores
+            Ant_bit_2 = '1'          #Definimos un valor de 1 al bit anterior para seguir con la conversión
+        if BMC[i:i+2] == "00":       #Condicional cuando dos bits de la cadena BMC vale 00
+            BMC_data += "0"          #Cuando dichas pocisiones valen 00, se agrega un 1 a la cadena de valores
+            Ant_bit_2 = '0'          #Definimos un valor de 0 al bit anterior para seguir con la conversión
+        if  BMC[i:i+2] == "11":      #Condicional cuando dos bits de la cadena BMC vale 11
+            BMC_data += "0"          #Cuando dichas pocisiones valen 11, se agrega un 0 a la cadena de valores
+            Ant_bit_2 = '0'          #Definimos un valor de 0 al bit anterior para seguir con la conversión
+    return BMC_data                  #Regresamos el valor actualizado de la cadena de valores
+
+"                          CODIFICACIÓN AMI                          "
+def Codificación_AMI(data):          #Definimos una función basada en el la cadena de valores (data)
+    AMI = ""                         #Creamos una cadena de valores vacía
+    cambio = False                   #Creamos una variable de tipo t/f para poder definir valores en + y -
+    for bit in data:                 #Ciclo for para leer en forma de bits la señal digital
+        if bit == '1':               #Condicional cuando un bit de la señal digital vale 1
+            if cambio:               #Condicional cuando se detecta un cambio
+                AMI += "-1"          #Cuando se detecta un cambio, se agrega un -1 a la cadena de valores
+                cambio = False       #Definimos el valor de false al cambio para seguir con la conversión
+            else:                    #Condicional cuando no se detecta un cambio
+                AMI += "1"           #Cuando no se detecta un cambio, se agrega un 1 a la cadena de valores
+                cambio = True        #Definimos el valor de true al cambio para seguir con la conversión
+        else:                        #Condicional cuando un bit de la señal digital vale 0
+            AMI += "0"               #Cuando el bit vale 0, se agrega un 0 a la cadena de valores
+    return AMI                       #Regresamos el valor actualizado de la cadena de valores
+
+"                          DECODIFICACIÓN AMI                          "
+def Descodificación_AMI(AMI):        #Definimos una función basada en el la cadena de valores (AMI)
+    AMI_data = ""                    #Creamos una cadena de valores vacía
+    for bit in AMI:                  #Ciclo for para leer en forma de bits la cadena AMI
+        if bit == '1' or bit == '-1':#Condicional cuando el bit de la cadena de valores vale 1 y -1
+            AMI_data += "1"          #Cuando no se detecta un cambio, se agrega un 1 a la cadena de valores
+        if bit == '0':               #Condicional cuando el bit de la cadena de valores vale 0
+            AMI_data += "0"          #Cuando no se detecta un cambio, se agrega un 1 a la cadena de valores
+    return AMI_data                  #Regresamos el valor actualizado de la cadena de valores
+
+"                               GRAFICOS                                "
+def graficas_conv(entrada):
+    grafica = list(entrada)                           #Se determinan los bits como un arreglo de caracteres
+    for i in range(len(grafica)):                     #Se convierte en un arreglo de números
+        grafica[i] = int(grafica[i])
+    x1= range(1, len(grafica)+1)                      #Se declara el rango de valores del arreglo en el eje X desde 1 hasta la 
+                                                      #longitud del arreglo de anterior
+    x = list(x1)                                      #Se declara la lista de valores
+    y = grafica                                       #Se declaran los valores en Y
+    plt.step(x, y, 'g', where='pre')                  #Se determina el tipo de gráfico y sus variables
+    plt.grid(color = 'black', linestyle = '--')       #Se agrega un grid
+    plt.show()                                        #Muestra el gráfico
+
+"         INTRODUCCIÓN DE LA SEÑAL DIGITAL EN BINARIO         "
+data = input("Introduzca la señal dIgital: ")          #El usuario ingresa los valores de la señal digital
+
+"         SELECCIÓN DEL TIPO DE CODIFICACIÓN         " 
+Codi = input("""                                         
+             Tipo de codificación                      
+       BMC -> [1]            AMI -> [2]                
+Seleccione el tipo de codificación que desea: """)
+print("")                                              #El usuario selecciona el tipo de codificación deseado
+
+"         CODIFICACIÓN Y DESCODIFICACIÓN EN BMC         "
+if Codi == '1':                                        #Condicional cuando elige la opción 1 (BMC)
+    BMC = Codificación_BMC(data)                       #Se le otorga una función a la variable
+    print(" Codificación BMC: ", BMC)                  #Se manda a imprimir la cadena de valores
+    print("")   
+
+    graph1 = graficas_conv(BMC)
+
+
+    Descodi_1= input("""¿Desea realizar una descodificación?
+       Si               No
+   Seleccione la opción deseada: """)
+    print("")                                          #El usuario selecciona si quiere que se descodifique
+
+    if Descodi_1 == 'Si':                              #Condicional cuando elige la opción Si (Descodificación)
+         BMC_data = Decodificación_BMC(BMC)            #Se le otorga una función a la variable
+         print("""Decodificación BMC: """, BMC_data)   #Se manda a imprimir la cadena de valores
+         print("")
+
+         graph2 = graficas_conv(BMC_data)
+
+    if Descodi_1== 'No':                               #Condicional cuando elige la opción No 
+        print("HASTA LUEGO :)")                        #Se manda a imprimir un mensaje de despedida
+
+"         CODIFICACIÓN Y DESCODIFICACIÓN EN AMI         "
+if Codi == '2':                                        #Condicional cuando elige la opción 1 (AMI)
+    AMI = Codificación_AMI(data)                       #Se le otorga una función a la variable
+    print("Codificación AMI: ", AMI)                   #Se manda a imprimir la cadena de valores
+    print("")
+
+    graph3 = graficas_conv(AMI)
+
+    Descodi_2= input("""¿Desea realizar una descodificación?
+       Si               No
+   Seleccione la opción deseada: """)
+    print("")                                          #El usuario selecciona si quiere que se descodifique
+
+    if Descodi_2 == 'Si':                              #Condicional cuando elige la opción Si (Descodificación)
+         AMI_data = Descodificación_AMI(AMI)           #Se le otorga una función a la variable
+         print("""Decodificación AMI: """, AMI_data)   #Se manda a imprimir la cadena de valores
+         print("")
+
+         graph4 = graficas_conv(AMI_data)
+
+    if Descodi_2 == 'No':                              #Condicional cuando elige la opción No 
+        print("HASTA LUEGO :)")                        #Se manda a imprimir un mensaje de despedida
