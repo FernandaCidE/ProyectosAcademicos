@@ -1,0 +1,30 @@
+//Cinemática de manipuladores  - Código Matlab 
+% Definir las longitudes de los brazos del robot UR10
+L1 = 0.1273;
+L2 = -0.612;
+L3 = -0.5723;
+L4 = 0.1639;
+L5 = 0.1157;
+L6 = 0.0922;
+
+% Crear un objeto SerialLink para el robot UR10
+UR10 = SerialLink([...
+    Revolute('d', L1, 'a', 0, 'alpha', pi/2, 'offset', 0, 'qlim', [-pi/2 pi/2]),...
+    Revolute('d', 0, 'a', L2, 'alpha', 0, 'offset', -pi/2, 'qlim', [-pi/2 pi/2]),...
+    Revolute('d', 0, 'a', L3, 'alpha', 0, 'offset', 0, 'qlim', [-pi/2 pi/2]),...
+    Revolute('d', L4, 'a', 0, 'alpha', pi/2, 'offset', -pi/2, 'qlim', [-pi/2 pi/2]),...
+    Revolute('d', 0, 'a', 0, 'alpha', -pi/2, 'offset', 0, 'qlim', [-pi/2 pi/2]),...
+    Revolute('d', L5+L6, 'a', 0, 'alpha', 0, 'offset', 0, 'qlim', [-pi/2 pi/2]),...
+    ], 'name', 'UR10');
+
+% Definir la posición objetivo con el efector final
+Tobjetivo = transl(0.8, 0.5, 0) * trotx(pi); %* trotx(pi/2);
+
+% Agregar la longitud del efector final al eje z de la posición objetivo
+Tobjetivo = Tobjetivo * transl(0.12, 0, -0.35);
+
+% Encontrar la cinemática inversa del robot UR10 para la posición objetivo
+q = UR10.ikunc(Tobjetivo);
+
+display (q)
+UR10.plot(q);
